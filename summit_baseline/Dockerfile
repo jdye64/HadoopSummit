@@ -2,6 +2,8 @@ FROM ubuntu:14.04
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
 ENV LD_LIBRARY_PATH = $LD_LIBRARY_PATH:/opencv-3.1.0/build/lib/
+ENV NIFI_HOME = /nifi-0.6.1
+ENV GIT_HADOOP_SUMMIT_HOME = /HadoopSummit
 
 # Update apt-get repository
 RUN apt-get update
@@ -24,7 +26,10 @@ RUN ln -s /usr/local/apache-maven-3.3.9/bin/mvn /usr/bin/mvn
 RUN git clone https://github.com/jdye64/HadoopSummit.git
 
 # Barcode Scanner Custom Processor
-RUN cd HadoopSummit/NiFiCustomProcessors/barcode && mvn clean install package && cp ./nifi-barcode-nar/target/nifi-barcode-nar-0.6.1.nar /nifi-0.6.1/lib
+RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/barcode && mvn clean install package && cp ./nifi-barcode-nar/target/nifi-barcode-nar-0.6.1.nar $NIFI_HOME/lib
+
+# Exposes the needed baseline ports
+EXPOSE 8080
 
 # Startup NiFi
-CMD /nifi-0.6.1/bin/nifi.sh run
+CMD $NIFI_HOME/bin/nifi.sh run
