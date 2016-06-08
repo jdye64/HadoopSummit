@@ -1,1 +1,4 @@
 DO_NOT_GITHUB
+**/target
+**/.idea
+*.iml
