@@ -2,8 +2,8 @@ FROM ubuntu:14.04
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
 ENV LD_LIBRARY_PATH = $LD_LIBRARY_PATH:/opencv-3.1.0/build/lib/
-ENV NIFI_HOME = /nifi-0.6.1
-ENV GIT_HADOOP_SUMMIT_HOME = /HadoopSummit
+ENV NIFI_HOME /nifi-0.6.1
+ENV GIT_HADOOP_SUMMIT_HOME /HadoopSummit
 
 # Update apt-get repository
 RUN apt-get update
