@@ -81,6 +81,38 @@ public class TesseractOCRProcessor extends AbstractProcessor {
     private static final  List<PropertyDescriptor> descriptors;
     private static final Set<Relationship> relationships;
 
+    static {
+        SUPPORTED_LANGUAGES = new HashSet<>();
+        SUPPORTED_LANGUAGES.add("eng"); //Since this is the default value we need to ensure it is present in the allowableValues.
+
+        //NOTE: this works with the latest version of NiFi but changed to work with older NiFi 0.6.1
+//        PAGE_SEGMENTATION_MODES = new ArrayList<>();
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("0","0 = Orientation and script detection (OSD) only"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("1","1 = Automatic page segmentation with OSD"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("2","2 = Automatic page segmentation, but no OSD, or OCR"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("3","3 = Fully automatic page segmentation, but no OSD"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("4","4 = Assume a single column of text of variable sizes"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("5","5 = Assume a single uniform block of vertically aligned text"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("6","6 = Assume a single uniform block of text"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("7","7 = Treat the image as a single text line"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("8","8 = Treat the image as a single word"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("9","9 = Treat the image as a single word in a circle"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("10","10 = Treat the image as a single character"));
+
+        PAGE_SEGMENTATION_MODES = new HashSet<>();
+        PAGE_SEGMENTATION_MODES.add("0 = Orientation and script detection (OSD) only");
+        PAGE_SEGMENTATION_MODES.add("1 = Automatic page segmentation with OSD");
+        PAGE_SEGMENTATION_MODES.add("2 = Automatic page segmentation, but no OSD, or OCR");
+        PAGE_SEGMENTATION_MODES.add("3 = Fully automatic page segmentation, but no OSD");
+        PAGE_SEGMENTATION_MODES.add("4 = Assume a single column of text of variable sizes");
+        PAGE_SEGMENTATION_MODES.add("5 = Assume a single uniform block of vertically aligned text");
+        PAGE_SEGMENTATION_MODES.add("6 = Assume a single uniform block of text");
+        PAGE_SEGMENTATION_MODES.add("7 = Treat the image as a single text line");
+        PAGE_SEGMENTATION_MODES.add("8 = Treat the image as a single word");
+        PAGE_SEGMENTATION_MODES.add("9 = Treat the image as a single word in a circle");
+        PAGE_SEGMENTATION_MODES.add("10 = Treat the image as a single character");
+    }
+
     public static final PropertyDescriptor TESS_DATA_PATH = new PropertyDescriptor
             .Builder().name("Tessdata Directory")
             .description("Directory on the local NiFi instance where the Tesseract languages and configurations are installed.")
@@ -169,36 +201,6 @@ public class TesseractOCRProcessor extends AbstractProcessor {
             .build();
 
     static {
-        SUPPORTED_LANGUAGES = new HashSet<>();
-        SUPPORTED_LANGUAGES.add("eng"); //Since this is the default value we need to ensure it is present in the allowableValues.
-
-        //NOTE: this works with the latest version of NiFi but changed to work with older NiFi 0.6.1
-//        PAGE_SEGMENTATION_MODES = new ArrayList<>();
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("0","0 = Orientation and script detection (OSD) only"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("1","1 = Automatic page segmentation with OSD"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("2","2 = Automatic page segmentation, but no OSD, or OCR"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("3","3 = Fully automatic page segmentation, but no OSD"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("4","4 = Assume a single column of text of variable sizes"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("5","5 = Assume a single uniform block of vertically aligned text"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("6","6 = Assume a single uniform block of text"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("7","7 = Treat the image as a single text line"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("8","8 = Treat the image as a single word"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("9","9 = Treat the image as a single word in a circle"));
-//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("10","10 = Treat the image as a single character"));
-
-        PAGE_SEGMENTATION_MODES = new HashSet<>();
-        PAGE_SEGMENTATION_MODES.add("0 = Orientation and script detection (OSD) only");
-        PAGE_SEGMENTATION_MODES.add("1 = Automatic page segmentation with OSD");
-        PAGE_SEGMENTATION_MODES.add("2 = Automatic page segmentation, but no OSD, or OCR");
-        PAGE_SEGMENTATION_MODES.add("3 = Fully automatic page segmentation, but no OSD");
-        PAGE_SEGMENTATION_MODES.add("4 = Assume a single column of text of variable sizes");
-        PAGE_SEGMENTATION_MODES.add("5 = Assume a single uniform block of vertically aligned text");
-        PAGE_SEGMENTATION_MODES.add("6 = Assume a single uniform block of text");
-        PAGE_SEGMENTATION_MODES.add("7 = Treat the image as a single text line");
-        PAGE_SEGMENTATION_MODES.add("8 = Treat the image as a single word");
-        PAGE_SEGMENTATION_MODES.add("9 = Treat the image as a single word in a circle");
-        PAGE_SEGMENTATION_MODES.add("10 = Treat the image as a single character");
-
         final List<PropertyDescriptor> _descriptors = new ArrayList<>();
         _descriptors.add(TESS_DATA_PATH);
         _descriptors.add(TESSERACT_LANGUAGE);
