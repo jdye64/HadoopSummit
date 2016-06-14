@@ -93,7 +93,12 @@ public class GetCameraFrame extends AbstractProcessor {
         this.relationships = Collections.unmodifiableSet(relationships);
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        camera = new VideoCapture();
+        camera = new VideoCapture(0);
+        try {
+            Thread.sleep(3000);             //Give the Camera a few seconds to initialize
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         camera.open(0);
 
     }
