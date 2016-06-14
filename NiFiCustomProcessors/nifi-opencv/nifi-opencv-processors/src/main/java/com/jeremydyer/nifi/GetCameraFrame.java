@@ -123,11 +123,15 @@ public class GetCameraFrame extends AbstractProcessor {
     @Override
     public void onTrigger(final ProcessContext context,
             final ProcessSession session) throws ProcessException {
+        getLogger().debug("Entering: onTrigger()");
         MatOfByte image = new MatOfByte();
         MatOfByte bytemat = new MatOfByte();
+        getLogger().debug("MatOfBytes created");
 
         camera.read(image);
+        getLogger().debug("Image read from camera: " + image.size().toString());
         Imgcodecs.imencode(".png", image, bytemat);
+        getLogger().debug("Image encoded to PNG format");
         byte[] bytes = bytemat.toArray();
 
         InputStream in = new ByteArrayInputStream(bytes);
@@ -135,6 +139,7 @@ public class GetCameraFrame extends AbstractProcessor {
         try {
             final BufferedImage img = ImageIO.read(in);
             FlowFile flowFile = session.create();
+            getLogger().debug("Writing image to FlowFile in the session");
             flowFile = session.write(flowFile, new OutputStreamCallback() {
                 @Override
                 public void process(final OutputStream out) throws IOException {
