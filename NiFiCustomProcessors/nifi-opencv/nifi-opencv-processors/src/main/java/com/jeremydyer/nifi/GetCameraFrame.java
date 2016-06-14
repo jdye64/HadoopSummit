@@ -46,7 +46,9 @@ import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.stream.io.ByteArrayInputStream;
 import org.opencv.core.Core;
 import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
+import org.opencv.videoio.Videoio;
 
 
 @Tags({ "image" })
@@ -110,10 +112,12 @@ public class GetCameraFrame extends AbstractProcessor {
     public void onScheduled(final ProcessContext context) {
         double width = context.getProperty(FRAME_WIDTH).asDouble()
                 .doubleValue();
-        camera.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, width);
+
+        camera.set(Videoio.CV_CAP_PROP_FRAME_WIDTH, width);
         double height = context.getProperty(FRAME_HEIGHT).asDouble()
                 .doubleValue();
-        camera.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, height);
+        camera.set(Videoio.CV_CAP_PROP_FRAME_HEIGHT, height);
+
     }
 
     @Override
@@ -123,7 +127,7 @@ public class GetCameraFrame extends AbstractProcessor {
         MatOfByte bytemat = new MatOfByte();
 
         camera.read(image);
-        Highgui.imencode(".png", image, bytemat);
+        Imgcodecs.imencode(".png", image, bytemat);
         byte[] bytes = bytemat.toArray();
 
         InputStream in = new ByteArrayInputStream(bytes);
