@@ -39,7 +39,6 @@ import org.apache.nifi.annotation.behavior.InputRequirement;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnScheduled;
-import org.apache.nifi.components.AllowableValue;
 import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.components.ValidationContext;
 import org.apache.nifi.components.ValidationResult;
@@ -76,7 +75,8 @@ public class TesseractOCRProcessor extends AbstractProcessor {
 
     public static Set<String> SUPPORTED_LANGUAGES;
     private static final String TESS_LANG_EXTENSION = ".traineddata";
-    private static List<AllowableValue> PAGE_SEGMENTATION_MODES;
+    //private static List<AllowableValue> PAGE_SEGMENTATION_MODES;        //NOTE: changed from List<AllowableValue> to Set<Strin> to work with NiFi 0.6.1
+    private static Set<String> PAGE_SEGMENTATION_MODES;
     private volatile ITesseract tesseract;
     private static final  List<PropertyDescriptor> descriptors;
     private static final Set<Relationship> relationships;
@@ -132,7 +132,8 @@ public class TesseractOCRProcessor extends AbstractProcessor {
             .Builder().name("Tesseract Page Segmentation Mode")
             .description("Set Tesseract to only run a subset of layout analysis and assume a certain form of image.")
             .required(true)
-            .defaultValue(PAGE_SEGMENTATION_MODES.get(3).getValue())
+            //.defaultValue(PAGE_SEGMENTATION_MODES.get(3).getValue()) //Removed to work with NiFi 0.6.1
+            .defaultValue("3 = Fully automatic page segmentation, but no OSD")
             .allowableValues(PAGE_SEGMENTATION_MODES)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -170,18 +171,32 @@ public class TesseractOCRProcessor extends AbstractProcessor {
         SUPPORTED_LANGUAGES = new HashSet<>();
         SUPPORTED_LANGUAGES.add("eng"); //Since this is the default value we need to ensure it is present in the allowableValues.
 
-        PAGE_SEGMENTATION_MODES = new ArrayList<>();
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("0","0 = Orientation and script detection (OSD) only"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("1","1 = Automatic page segmentation with OSD"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("2","2 = Automatic page segmentation, but no OSD, or OCR"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("3","3 = Fully automatic page segmentation, but no OSD"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("4","4 = Assume a single column of text of variable sizes"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("5","5 = Assume a single uniform block of vertically aligned text"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("6","6 = Assume a single uniform block of text"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("7","7 = Treat the image as a single text line"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("8","8 = Treat the image as a single word"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("9","9 = Treat the image as a single word in a circle"));
-        PAGE_SEGMENTATION_MODES.add(new AllowableValue("10","10 = Treat the image as a single character"));
+        //NOTE: this works with the latest version of NiFi but changed to work with older NiFi 0.6.1
+//        PAGE_SEGMENTATION_MODES = new ArrayList<>();
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("0","0 = Orientation and script detection (OSD) only"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("1","1 = Automatic page segmentation with OSD"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("2","2 = Automatic page segmentation, but no OSD, or OCR"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("3","3 = Fully automatic page segmentation, but no OSD"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("4","4 = Assume a single column of text of variable sizes"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("5","5 = Assume a single uniform block of vertically aligned text"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("6","6 = Assume a single uniform block of text"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("7","7 = Treat the image as a single text line"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("8","8 = Treat the image as a single word"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("9","9 = Treat the image as a single word in a circle"));
+//        PAGE_SEGMENTATION_MODES.add(new AllowableValue("10","10 = Treat the image as a single character"));
+
+        PAGE_SEGMENTATION_MODES = new HashSet<>();
+        PAGE_SEGMENTATION_MODES.add("0 = Orientation and script detection (OSD) only");
+        PAGE_SEGMENTATION_MODES.add("1 = Automatic page segmentation with OSD");
+        PAGE_SEGMENTATION_MODES.add("2 = Automatic page segmentation, but no OSD, or OCR");
+        PAGE_SEGMENTATION_MODES.add("3 = Fully automatic page segmentation, but no OSD");
+        PAGE_SEGMENTATION_MODES.add("4 = Assume a single column of text of variable sizes");
+        PAGE_SEGMENTATION_MODES.add("5 = Assume a single uniform block of vertically aligned text");
+        PAGE_SEGMENTATION_MODES.add("6 = Assume a single uniform block of text");
+        PAGE_SEGMENTATION_MODES.add("7 = Treat the image as a single text line");
+        PAGE_SEGMENTATION_MODES.add("8 = Treat the image as a single word");
+        PAGE_SEGMENTATION_MODES.add("9 = Treat the image as a single word in a circle");
+        PAGE_SEGMENTATION_MODES.add("10 = Treat the image as a single character");
 
         final List<PropertyDescriptor> _descriptors = new ArrayList<>();
         _descriptors.add(TESS_DATA_PATH);
@@ -265,7 +280,7 @@ public class TesseractOCRProcessor extends AbstractProcessor {
 
         //Transfer the original
         session.transfer(session.clone(flowFile), REL_ORIGINAL);
-        AtomicBoolean errors = new AtomicBoolean(false);
+        final AtomicBoolean errors = new AtomicBoolean(false);
 
         FlowFile ff = session.write(flowFile, new StreamCallback() {
             @Override
