@@ -1,4 +1,5 @@
 FROM ubuntu:15.10
+MAINTAINER Jeremy Dyer
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-oracle
 ENV LD_LIBRARY_PATH = $LD_LIBRARY_PATH:/opencv-3.1.0/build/lib/
