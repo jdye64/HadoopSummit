@@ -123,7 +123,8 @@ public class TesseractOCRProcessor extends AbstractProcessor {
             .Builder().name("Tesseract Language")
             .description("Language that Tesseract will use to perform OCR on image coming in the incoming FlowFile's content")
             .required(true)
-            .defaultValue(SUPPORTED_LANGUAGES.iterator().next())
+            //.defaultValue(SUPPORTED_LANGUAGES.iterator().next())
+            .defaultValue("eng")
             .allowableValues(SUPPORTED_LANGUAGES)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
