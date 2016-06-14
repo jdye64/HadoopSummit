@@ -101,6 +101,15 @@ public class GetCameraFrame extends AbstractProcessor {
         }
         camera.open(0);
 
+        if(!camera.isOpened()){
+            System.out.println("Camera Error loading");
+            getLogger().error("Camera Error");
+        }
+        else{
+            System.out.println("Camera loaded OK!");
+            getLogger().error("Camera OK?");
+        }
+
     }
 
     @Override
