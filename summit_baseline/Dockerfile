@@ -10,7 +10,7 @@ ENV GIT_HADOOP_SUMMIT_HOME /HadoopSummit
 RUN apt-get update
 
 # Install system dependencies
-RUN apt-get install -y unzip ant git wget build-essential cmake libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev curl python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev autoconf automake libtool libicu-dev
+RUN apt-get install -y unzip ant git wget build-essential cmake libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev curl python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev autoconf automake libtool libicu-dev vim
 
 # Install Java JDK 8u91
 RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && apt-get install -y software-properties-common && add-apt-repository ppa:webupd8team/java -y && apt-get update && apt-get install -y oracle-java8-installer && apt-get install -y oracle-java8-set-default
