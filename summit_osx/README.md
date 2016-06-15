@@ -7,4 +7,12 @@ https://tskamath.wordpress.com/2014/10/29/macbook-camera-virtualbox-2/
 # TODO: Write script to manually enable USB support on VM otherwise enabling the camera will fail.
 # TODO: Write script to automatically attach to the local WebCam on OS X devices.
 
+# Enable USB for the VM image
+VBoxManage modifyvm "docker-hwx" --usb on
 VBoxManage controlvm "docker-hwx" webcam attach .0
+
+https://github.com/chipgarner/opencv3-webcam-docker
+
+https://docs.docker.com/machine/drivers/virtualbox/
+https://tskamath.wordpress.com/2014/10/29/macbook-camera-virtualbox-2/
+https://trac.ffmpeg.org/wiki/Capture/Webcam
