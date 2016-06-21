@@ -67,11 +67,11 @@ public class GetCameraFrame extends AbstractProcessor {
 
     public static final PropertyDescriptor FRAME_WIDTH = new PropertyDescriptor.Builder()
             .name("Width").description("Width in pixels of capture")
-            .required(false).defaultValue("1280")
+            .required(false).defaultValue("640")
             .addValidator(StandardValidators.INTEGER_VALIDATOR).build();
     public static final PropertyDescriptor FRAME_HEIGHT = new PropertyDescriptor.Builder()
             .name("Height").description("Height in pixels of capture")
-            .required(false).defaultValue("720")
+            .required(false).defaultValue("480")
             .addValidator(StandardValidators.INTEGER_VALIDATOR).build();
 
     private List<PropertyDescriptor> descriptors;

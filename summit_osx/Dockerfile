@@ -3,6 +3,8 @@ MAINTAINER Jeremy Dyer
 
 # FYI - GIT_HADOOP_SUMMIT_HOME & NIFI_HOME ENV variales are defined in parent Docker image
 
+RUN apt-get install -y libv4l-dev dv4l v4l-utils
+
 # Clones the Github repo to the local container
 RUN git clone https://github.com/jdye64/HadoopSummit.git
 
@@ -14,3 +16,9 @@ RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-ocr && mvn clean instal
 
 # Build the "nifi-barcode" custom processor and add to local installation
 RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-barcode && mvn clean install package && cp ./nifi-barcode-nar/target/nifi-barcode-nar-0.6.1.nar $NIFI_HOME/lib
+
+# Add test image assets
+ADD images /images
+
+# Add flow configuration
+ADD nifi/flow.xml.gz /nifi-0.6.1/conf

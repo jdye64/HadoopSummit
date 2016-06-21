@@ -16,3 +16,8 @@ https://github.com/chipgarner/opencv3-webcam-docker
 https://docs.docker.com/machine/drivers/virtualbox/
 https://tskamath.wordpress.com/2014/10/29/macbook-camera-virtualbox-2/
 https://trac.ffmpeg.org/wiki/Capture/Webcam
+
+# For install the webcam driver for docker-machine
+docker-machine ssh docker-machine
+tce-load -w -i v4l-dvb-4.2.7-tinycore64.tcz
+exit

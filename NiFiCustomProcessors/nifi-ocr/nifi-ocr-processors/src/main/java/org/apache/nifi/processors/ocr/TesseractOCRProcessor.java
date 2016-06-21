@@ -269,7 +269,8 @@ public class TesseractOCRProcessor extends AbstractProcessor {
         //Setup the Tesseract instance once the processor is scheuled
         tesseract = new Tesseract();
         tesseract.setLanguage(context.getProperty(TESSERACT_LANGUAGE).getValue());
-        tesseract.setPageSegMode((context.getProperty(TESSERACT_PAGE_SEG_MODE).asInteger()));
+        //tesseract.setPageSegMode((context.getProperty(TESSERACT_PAGE_SEG_MODE).asInteger()));
+        tesseract.setPageSegMode(3);
     }
 
 
