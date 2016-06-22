@@ -9,16 +9,16 @@ RUN apt-get install -y libv4l-dev dv4l v4l-utils mysql-client-5.6
 ADD nifi/lib /nifi-0.6.1/lib
 
 # Clones the Github repo to the local container
-#RUN git clone https://github.com/jdye64/HadoopSummit.git
+RUN git clone https://github.com/jdye64/HadoopSummit.git
 
 # Build the "nifi-opencv" custom processor and add to local installation
-#RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-opencv && mvn clean install package -DskipTests && cp ./nifi-opencv-nar/target/nifi-opencv-nar-0.6.1.nar $NIFI_HOME/lib
+RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-opencv && mvn clean install package -DskipTests && cp ./nifi-opencv-nar/target/nifi-opencv-nar-0.6.1.nar $NIFI_HOME/lib
 
 # Build the "nifi-ocr" custom processor and add to local installation
-#RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-ocr && mvn clean install package -DskipTests && cp ./nifi-ocr-nar/target/nifi-ocr-nar-0.6.1.nar $NIFI_HOME/lib
+RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-ocr && mvn clean install package -DskipTests && cp ./nifi-ocr-nar/target/nifi-ocr-nar-0.6.1.nar $NIFI_HOME/lib
 
 # Build the "nifi-barcode" custom processor and add to local installation
-#RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-barcode && mvn clean install package && cp ./nifi-barcode-nar/target/nifi-barcode-nar-0.6.1.nar $NIFI_HOME/lib
+RUN cd $GIT_HADOOP_SUMMIT_HOME/NiFiCustomProcessors/nifi-barcode && mvn clean install package && cp ./nifi-barcode-nar/target/nifi-barcode-nar-0.6.1.nar $NIFI_HOME/lib
 
 # Add test image assets
 ADD images /images
@@ -30,4 +30,3 @@ EXPOSE 9091
 RUN rm -rf ./nifi-0.6.1/conf
 ADD nifi/conf /nifi-0.6.1/conf
 ADD nifi/extras /nifi-0.6.1/extras
-ADD mysql/Data.csv /
