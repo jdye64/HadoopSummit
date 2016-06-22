@@ -1,6 +1,6 @@
 #!/bin/bash
 SLEEP_SEC="40"
-HDP_IMAGE_NAME="jdye64/hadoopsummit:server"
+HDP_IMAGE_NAME="jdye64/hadoopsummit:summit_server"
 eval "$(docker-machine env docker-hwx)"
 
 DOCKER_MACHINE_NAME=env | grep docker | grep DOCKER_MACHINE_NAME | cut -f2 -d'='
@@ -22,7 +22,7 @@ else
 fi
 
 # Checks for an instance of $NIFI_IMAGE_NAME already running
-CONTAINER_ID=$(docker ps | grep jdye64/hadoopsummit:server | awk '{ print $1 }')
+CONTAINER_ID=$(docker ps | grep jdye64/hadoopsummit:summit_server | awk '{ print $1 }')
 if [ -n "$CONTAINER_ID" ]; then
 	echo "There is already an instance of $HDP_IMAGE_NAME running as container $CONTAINER_ID"
 	while true; do
