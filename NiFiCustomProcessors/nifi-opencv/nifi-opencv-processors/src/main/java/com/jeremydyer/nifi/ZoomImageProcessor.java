@@ -129,7 +129,7 @@ public class ZoomImageProcessor extends AbstractProcessor {
                     Imgproc.resize(source, destination, destination.size(), zoomingFactor, zoomingFactor, Imgproc.INTER_CUBIC);
 
                     MatOfByte bytemat = new MatOfByte();
-                    Imgcodecs.imencode(".jpg", destination, bytemat);
+                    Imgcodecs.imencode(".png", destination, bytemat);
                     pixels = bytemat.toArray();
                     outputStream.write(pixels);
 

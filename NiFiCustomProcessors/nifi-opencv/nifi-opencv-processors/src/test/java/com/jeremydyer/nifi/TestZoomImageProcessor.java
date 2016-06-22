@@ -45,7 +45,7 @@ public class TestZoomImageProcessor {
 
             List<MockFlowFile> ffs = testRunner.getFlowFilesForRelationship(ZoomImageProcessor.REL_SUCCESS);
             byte[] data = ffs.get(0).toByteArray();
-            FileOutputStream fos = new FileOutputStream(new File("src/test/resources/zoomed.jpg"));
+            FileOutputStream fos = new FileOutputStream(new File("src/test/resources/zoomed.png"));
             fos.write(data);
             fos.close();
 
