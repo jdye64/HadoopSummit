@@ -14,3 +14,4 @@
 # limitations under the License.
 com.jeremydyer.nifi.ObjectDetectionProcessor
 com.jeremydyer.nifi.GetCameraFrame
+com.jeremydyer.nifi.ZoomImageProcessor

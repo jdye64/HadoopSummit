@@ -67,11 +67,11 @@ public class GetCameraFrame extends AbstractProcessor {
 
     public static final PropertyDescriptor FRAME_WIDTH = new PropertyDescriptor.Builder()
             .name("Width").description("Width in pixels of capture")
-            .required(false).defaultValue("640")
+            .required(false).defaultValue("1280")
             .addValidator(StandardValidators.INTEGER_VALIDATOR).build();
     public static final PropertyDescriptor FRAME_HEIGHT = new PropertyDescriptor.Builder()
             .name("Height").description("Height in pixels of capture")
-            .required(false).defaultValue("480")
+            .required(false).defaultValue("720")
             .addValidator(StandardValidators.INTEGER_VALIDATOR).build();
 
     private List<PropertyDescriptor> descriptors;
@@ -95,18 +95,16 @@ public class GetCameraFrame extends AbstractProcessor {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         camera = new VideoCapture(0);
         try {
-            Thread.sleep(3000);             //Give the Camera a few seconds to initialize
+            Thread.sleep(2000);             //Give the Camera a few seconds to initialize
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         camera.open(0);
 
         if(!camera.isOpened()){
-            System.out.println("Camera Error loading");
             getLogger().error("Camera Error");
         }
         else{
-            System.out.println("Camera loaded OK!");
             getLogger().error("Camera OK?");
         }
 
@@ -137,15 +135,11 @@ public class GetCameraFrame extends AbstractProcessor {
     @Override
     public void onTrigger(final ProcessContext context,
             final ProcessSession session) throws ProcessException {
-        getLogger().debug("Entering: onTrigger()");
         MatOfByte image = new MatOfByte();
         MatOfByte bytemat = new MatOfByte();
-        getLogger().debug("MatOfBytes created");
 
         camera.read(image);
-        getLogger().debug("Image read from camera: " + image.size().toString());
         Imgcodecs.imencode(".png", image, bytemat);
-        getLogger().debug("Image encoded to PNG format");
         byte[] bytes = bytemat.toArray();
 
         InputStream in = new ByteArrayInputStream(bytes);
@@ -153,7 +147,6 @@ public class GetCameraFrame extends AbstractProcessor {
         try {
             final BufferedImage img = ImageIO.read(in);
             FlowFile flowFile = session.create();
-            getLogger().debug("Writing image to FlowFile in the session");
             flowFile = session.write(flowFile, new OutputStreamCallback() {
                 @Override
                 public void process(final OutputStream out) throws IOException {
