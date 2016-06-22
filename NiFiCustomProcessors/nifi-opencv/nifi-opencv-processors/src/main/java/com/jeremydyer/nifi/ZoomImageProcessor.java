@@ -118,7 +118,7 @@ public class ZoomImageProcessor extends AbstractProcessor {
 
                     BufferedImage image = ImageIO.read(inputStream);
                     byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                    Mat source = new Mat();
+                    Mat source = new Mat(image.getHeight(), image.getWidth(), image.getType());
                     source.put(0, 0, pixels);
 
                     Mat destination = new Mat(source.rows() * zoomingFactor, source.cols() * zoomingFactor, source.type());
