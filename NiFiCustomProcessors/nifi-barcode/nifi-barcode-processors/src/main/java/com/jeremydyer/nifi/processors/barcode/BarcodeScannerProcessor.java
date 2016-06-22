@@ -116,7 +116,7 @@ public class BarcodeScannerProcessor extends AbstractProcessor {
                     outputStream.write(result.getText().getBytes());
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    session.transfer(flowFile, REL_FAILURE);
+                    //session.transfer(flowFile, REL_FAILURE);
                 }
             }
         });
