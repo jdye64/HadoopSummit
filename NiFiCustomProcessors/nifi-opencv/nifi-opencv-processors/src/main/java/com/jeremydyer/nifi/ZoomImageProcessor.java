@@ -44,6 +44,7 @@ import org.apache.nifi.processor.io.StreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -125,12 +126,11 @@ public class ZoomImageProcessor extends AbstractProcessor {
                     source.put(0, 0, pixels);
 
                     Mat destination = new Mat(source.rows() * zoomingFactor, source.cols() * zoomingFactor, source.type());
-                    Imgproc.resize(source, destination, destination.size(), zoomingFactor, zoomingFactor, Imgproc.INTER_NEAREST);
+                    Imgproc.resize(source, destination, destination.size(), zoomingFactor, zoomingFactor, Imgproc.INTER_CUBIC);
 
-                    //Gets the pixels byte Array from teh resized image.
-                    pixels = new byte[(int) (destination.total() * destination.channels())];
-                    destination.get(0, 0, pixels);
-
+                    MatOfByte bytemat = new MatOfByte();
+                    Imgcodecs.imencode(".jpg", destination, bytemat);
+                    pixels = bytemat.toArray();
                     outputStream.write(pixels);
 
                 } catch (Exception ex) {

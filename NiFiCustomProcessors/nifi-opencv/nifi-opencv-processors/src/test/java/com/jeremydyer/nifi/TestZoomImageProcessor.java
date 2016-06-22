@@ -18,7 +18,10 @@
 package com.jeremydyer.nifi;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 
+import org.apache.nifi.util.MockFlowFile;
 import org.apache.nifi.util.TestRunner;
 import org.apache.nifi.util.TestRunners;
 import org.junit.Before;
@@ -39,6 +42,13 @@ public class TestZoomImageProcessor {
         try {
             testRunner.enqueue(new File("src/test/resources/GrayScaleImage.jpg").toPath());
             testRunner.run();
+
+            List<MockFlowFile> ffs = testRunner.getFlowFilesForRelationship(ZoomImageProcessor.REL_SUCCESS);
+            byte[] data = ffs.get(0).toByteArray();
+            FileOutputStream fos = new FileOutputStream(new File("src/test/resources/zoomed.jpg"));
+            fos.write(data);
+            fos.close();
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
