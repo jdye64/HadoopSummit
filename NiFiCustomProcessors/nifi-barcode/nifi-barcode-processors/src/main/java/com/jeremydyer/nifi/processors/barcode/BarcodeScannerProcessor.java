@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.imageio.ImageIO;
 
@@ -97,6 +98,8 @@ public class BarcodeScannerProcessor extends AbstractProcessor {
             return;
         }
 
+        final AtomicBoolean errors = new AtomicBoolean(false);
+
         FlowFile ff = session.write(flowFile, new StreamCallback() {
             @Override
             public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
@@ -117,10 +120,15 @@ public class BarcodeScannerProcessor extends AbstractProcessor {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     //session.transfer(flowFile, REL_FAILURE);
+                    errors.set(true);
                 }
             }
         });
 
-        session.transfer(ff, REL_SUCCESS);
+        if (!errors.get()) {
+            session.transfer(ff, REL_SUCCESS);
+        } else {
+            session.transfer(ff, REL_FAILURE);
+        }
     }
 }
