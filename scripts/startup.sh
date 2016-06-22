@@ -6,6 +6,7 @@ docker rmi -f $(docker images | grep "^<none>" | awk "{print $3}")
 
 mysql --local-infile=1  -h mysql -P 3306 -u root -p
 
+
 # Example of how to load csv data
 load data local infile 'Data.csv' into table attendees
 fields terminated by ','
