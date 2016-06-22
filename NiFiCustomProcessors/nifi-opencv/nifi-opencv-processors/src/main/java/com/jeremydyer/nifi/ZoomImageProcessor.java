@@ -44,6 +44,7 @@ import org.apache.nifi.processor.io.StreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 @Tags({"opencv", "zoom", "image"})
@@ -110,6 +111,8 @@ public class ZoomImageProcessor extends AbstractProcessor {
             return;
         }
 
+        session.transfer(session.clone(original), REL_ORIGINAL);
+
         FlowFile ff = session.write(original, new StreamCallback() {
             @Override
             public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
@@ -118,7 +121,7 @@ public class ZoomImageProcessor extends AbstractProcessor {
 
                     BufferedImage image = ImageIO.read(inputStream);
                     byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-                    Mat source = new Mat(image.getHeight(), image.getWidth(), image.getType());
+                    Mat source = new Mat(image.getHeight(), image.getWidth(), Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
                     source.put(0, 0, pixels);
 
                     Mat destination = new Mat(source.rows() * zoomingFactor, source.cols() * zoomingFactor, source.type());
@@ -138,7 +141,6 @@ public class ZoomImageProcessor extends AbstractProcessor {
         });
 
         session.transfer(ff, REL_SUCCESS);
-        session.transfer(original, REL_ORIGINAL);
 
     }
 }
