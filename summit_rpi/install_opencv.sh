@@ -36,3 +36,6 @@ cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local -DBUILD_SHA
 make -j4
 make install
 sudo ldconfig
+
+# Setup /dev/video0
+sudo modprobe bcm2835-v4l2
