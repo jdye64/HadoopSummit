@@ -37,5 +37,17 @@ CREATE TABLE attendee_visits
 (
 	ID int primary key auto_increment,
 	AttendeeID int,
-	timestamp int
+	timestamp int,
+	phrase_spoken int
 );
+
+CREATE TABLE phrases
+(
+	ID int primary key auto_increment,
+	message varchar(255),
+	speakdate date
+);
+
+INSERT INTO phrases(ID, message, speakdate) VALUES(0, "Hello ${FirstName} ${LastName}. How was your flight in from ${City}?", "");
+
+
