@@ -36,7 +36,7 @@ if [ -n "$CONTAINER_ID" ]; then
 fi
 
 echo "Launching latest $HDP_IMAGE_NAME instance"
-CONTAINER_ID=$(docker run -t -d -p 9090:9090 -p 9091:9091 --link mysql:mysql --privileged -v /dev/video0:/dev/video0 -h docker.dev $HDP_IMAGE_NAME)
+CONTAINER_ID=$(docker run -t -d -p 9090:9090 -p 9091:9091 --link mysql:mysql -h docker.dev $HDP_IMAGE_NAME)
 
 IP_ADDR=$(docker-machine inspect $DOCKER_MACHINE_NAME | grep IPAddress | cut -f2 -d':' | cut -f2 -d'"')
 echo "IPAddress: $IP_ADDR"
