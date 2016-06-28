@@ -48,9 +48,9 @@ CREATE TABLE phrases
 (
 	ID int primary key auto_increment,
 	message varchar(255),
-	speakdate date
+	day_idx int
 );
 
-INSERT INTO phrases(ID, message, speakdate) VALUES(0, "Hello ${FirstName} ${LastName}. How was your flight in from ${City}?", "");
+INSERT INTO phrases(ID, message, speakdate) VALUES(0, "Hello ${FirstName} ${LastName}. How was your flight in from ${City}?", 1);
 
 
