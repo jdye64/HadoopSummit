@@ -16,10 +16,19 @@
  */
 package com.jeremydyer.nifi;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.nifi.components.PropertyDescriptor;
-import org.apache.nifi.flowfile.FlowFile;
-import org.apache.nifi.processor.*;
 import org.apache.nifi.annotation.behavior.ReadsAttribute;
 import org.apache.nifi.annotation.behavior.ReadsAttributes;
 import org.apache.nifi.annotation.behavior.WritesAttribute;
@@ -27,23 +36,29 @@ import org.apache.nifi.annotation.behavior.WritesAttributes;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.SeeAlso;
 import org.apache.nifi.annotation.documentation.Tags;
+import org.apache.nifi.components.PropertyDescriptor;
+import org.apache.nifi.flowfile.FlowFile;
+import org.apache.nifi.processor.AbstractProcessor;
+import org.apache.nifi.processor.ProcessContext;
+import org.apache.nifi.processor.ProcessSession;
+import org.apache.nifi.processor.ProcessorInitializationContext;
+import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.io.OutputStreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.opencv.core.*;
-
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Tags({"opencv, object detection"})
 @CapabilityDescription("Detects objects from the input images based on the configured OpenCV CascadeClassifier loaded." +
@@ -131,7 +146,7 @@ public class ObjectDetectionProcessor extends AbstractProcessor {
 
                 try {
                     byte[] imgData = IOUtils.toByteArray(inputStream);
-                    Mat image = Imgcodecs.imdecode(new MatOfByte(imgData), Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+                    Mat image = Imgcodecs.imdecode(new MatOfByte(imgData), Imgcodecs.CV_LOAD_IMAGE_COLOR);
 
                     //Loops through all of the detection definitions
                     JSONArray dds = JSON.getJSONArray("DetectionDefinition");
