@@ -30,3 +30,6 @@ EXPOSE 9091
 RUN rm -rf ./nifi-0.6.1/conf
 ADD nifi/conf /nifi-0.6.1/conf
 ADD nifi/extras /nifi-0.6.1/extras
+ADD opencv /opencv
+
+RUN mkdir /facedetection_staging

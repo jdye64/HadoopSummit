@@ -1,0 +1,1 @@
+VBoxManage modifyvm docker-hwx --natdnshostresolver1 on

@@ -16,7 +16,7 @@ else
 	# Removes any already existing containers
 	EXISTING_CONTAINER=$(docker ps -a | grep mysql:5.6 | awk '{ print $1 }')
 	docker rm -f $EXISTING_CONTAINER
-	docker run --name mysql -p 3306:3306 -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=hadoopsummit -d mysql:5.6
+	docker run --name mysql -p 3306:3306 --privileged -v /var/lib/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=hadoopsummit -d mysql:5.6
 	echo "Sleep for 10 seconds to give MySQL time to startup and be available for linking"
 	sleep 10
 fi
@@ -36,7 +36,7 @@ if [ -n "$CONTAINER_ID" ]; then
 fi
 
 echo "Launching latest $HDP_IMAGE_NAME instance"
-CONTAINER_ID=$(docker run -t -d -p 9090:9090 -p 9091:9091 --link mysql:mysql --privileged -v /dev/video0:/dev/video0 -h docker.dev $HDP_IMAGE_NAME)
+CONTAINER_ID=$(docker run -t -d -p 9090:9090 -p 9091:9091 --privileged --link mysql:mysql -h docker.dev $HDP_IMAGE_NAME)
 
 IP_ADDR=$(docker-machine inspect $DOCKER_MACHINE_NAME | grep IPAddress | cut -f2 -d':' | cut -f2 -d'"')
 echo "IPAddress: $IP_ADDR"
