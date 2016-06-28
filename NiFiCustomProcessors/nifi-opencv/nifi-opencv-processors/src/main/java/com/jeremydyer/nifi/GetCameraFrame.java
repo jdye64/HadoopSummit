@@ -82,7 +82,7 @@ public class GetCameraFrame extends AbstractProcessor {
     @Override
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
-        // descriptors.add(CAMERA);
+        //descriptors.add(CAMERA);
         descriptors.add(FRAME_WIDTH);
         descriptors.add(FRAME_HEIGHT);
 
@@ -93,7 +93,7 @@ public class GetCameraFrame extends AbstractProcessor {
         this.relationships = Collections.unmodifiableSet(relationships);
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        camera = new VideoCapture(0);
+        camera = new VideoCapture(1);
         try {
             Thread.sleep(2000);             //Give the Camera a few seconds to initialize
         } catch (InterruptedException e) {
