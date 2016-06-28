@@ -1,3 +1,6 @@
+CREATE DATABASE HadoopSummit;
+USE HadoopSummit;
+
 CREATE TABLE attendees
 (
 	ID int primary key,
