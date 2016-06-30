@@ -51,6 +51,6 @@ CREATE TABLE phrases
 	day_idx int
 );
 
-INSERT INTO phrases(ID, message, speakdate) VALUES(0, "Hello ${FirstName} ${LastName}. How was your flight in from ${City}?", 1);
+INSERT INTO phrases(ID, message, day_idx) VALUES(0, "Hello ${FirstName} ${LastName}. How was your flight in from ${City}?", 1);
 
 

@@ -67,8 +67,14 @@ import org.opencv.objdetect.CascadeClassifier;
 @ReadsAttributes({@ReadsAttribute(attribute="", description="")})
 @WritesAttributes(
         {
-                @WritesAttribute(attribute="object.detection.name", description=""),
-                @WritesAttribute(attribute="object.detection.id", description="")
+                @WritesAttribute(attribute="object.detection.name", description="Name of the object detected from the JSON object detection definition"),
+                @WritesAttribute(attribute="object.detection.id", description="Current timestamp in UTC of when the image was detected"),
+                @WritesAttribute(attribute="object.detection.x", description = "X coordinate where the Object detection begins"),
+                @WritesAttribute(attribute="object.detection.y", description = "Y coordinate where the Object detection begins"),
+                @WritesAttribute(attribute="object.detection.width", description = "Width of the object detected"),
+                @WritesAttribute(attribute="object.detection.height", description = "height of the object detected"),
+                @WritesAttribute(attribute="image.width", description = "Width of the original image"),
+                @WritesAttribute(attribute="image.height", description = "Height of the original image")
         }
 )
 public class ObjectDetectionProcessor extends AbstractProcessor {
@@ -214,6 +220,12 @@ public class ObjectDetectionProcessor extends AbstractProcessor {
             Map<String, String> atts = new HashMap<>();
             atts.put("object.detection.name", dd.getString("name"));
             atts.put("object.detection.id", new Long(System.currentTimeMillis() + counter).toString());
+            atts.put("object.detection.x", new Long(rect.x).toString());
+            atts.put("object.detection.y", new Long(rect.y).toString());
+            atts.put("object.detection.width", new Long(rect.width).toString());
+            atts.put("object.detection.height", new Long(rect.height).toString());
+            atts.put("image.width", new Double(image.size().width).toString());
+            atts.put("image.height", new Double(image.size().height).toString());
 
             counter++;
 

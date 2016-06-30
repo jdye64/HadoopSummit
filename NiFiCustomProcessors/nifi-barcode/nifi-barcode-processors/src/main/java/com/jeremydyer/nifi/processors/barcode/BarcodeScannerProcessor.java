@@ -28,9 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.nifi.annotation.behavior.WritesAttribute;
+import org.apache.nifi.annotation.behavior.WritesAttributes;
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.components.PropertyDescriptor;
@@ -41,6 +45,7 @@ import org.apache.nifi.processor.ProcessSession;
 import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.exception.ProcessException;
+import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.io.StreamCallback;
 
 import com.google.zxing.BinaryBitmap;
@@ -54,7 +59,27 @@ import com.google.zxing.common.HybridBinarizer;
 
 @Tags({"barcode, scanner"})
 @CapabilityDescription("Scans an image and searches for a barcode. The text of the found barcode is emitted by the processor.")
+@WritesAttributes(
+        {
+                @WritesAttribute(attribute="barcode", description = "Barcode number pulled from the image"),
+        }
+)
 public class BarcodeScannerProcessor extends AbstractProcessor {
+
+    public static final String BARCODE_ATTRIBUTE_NAME = "barcode";
+
+    public static final String DESTINATION_ATTRIBUTE = "flowfile-attribute";
+    public static final String DESTINATION_CONTENT = "flowfile-content";
+
+    public static final PropertyDescriptor DESTINATION = new PropertyDescriptor.Builder()
+            .name("Destination")
+            .description("Control if detected barcode value is written as a new flowfile attribute '" + BARCODE_ATTRIBUTE_NAME + "' " +
+                    "or written in the flowfile content. Writing to flowfile content will overwrite any " +
+                    "existing flowfile content.")
+            .required(true)
+            .allowableValues(DESTINATION_ATTRIBUTE, DESTINATION_CONTENT)
+            .defaultValue(DESTINATION_CONTENT)
+            .build();
 
     public static final Relationship REL_SUCCESS = new Relationship.Builder()
             .name("success")
@@ -73,6 +98,7 @@ public class BarcodeScannerProcessor extends AbstractProcessor {
     @Override
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
+        descriptors.add(DESTINATION);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -100,35 +126,81 @@ public class BarcodeScannerProcessor extends AbstractProcessor {
 
         final AtomicBoolean errors = new AtomicBoolean(false);
 
-        FlowFile ff = session.write(flowFile, new StreamCallback() {
-            @Override
-            public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
+        switch (context.getProperty(DESTINATION).getValue()) {
+            case DESTINATION_ATTRIBUTE:
+                final AtomicReference<String> BC = new AtomicReference<>();
+                session.read(flowFile, new InputStreamCallback() {
+                    @Override
+                    public void process(InputStream inputStream) throws IOException {
 
-                Map hintMap = new HashMap();
-                hintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+                        Map hintMap = new HashMap();
+                        hintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
-                try {
-                    BufferedImage barCodeBufferedImage = ImageIO.read(inputStream);
+                        try {
+                            BufferedImage barCodeBufferedImage = ImageIO.read(inputStream);
 
-                    LuminanceSource source = new BufferedImageLuminanceSource(barCodeBufferedImage);
-                    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                    Reader reader = new MultiFormatReader();
-                    Result result = reader.decode(bitmap, hintMap);
-                    getLogger().info("Barcode Format: " + result.getBarcodeFormat().toString());
-                    getLogger().info("Barcode Text is: ' " + result.getText() + "'");
-                    outputStream.write(result.getText().getBytes());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    //session.transfer(flowFile, REL_FAILURE);
-                    errors.set(true);
+                            LuminanceSource source = new BufferedImageLuminanceSource(barCodeBufferedImage);
+                            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                            Reader reader = new MultiFormatReader();
+                            Result result = reader.decode(bitmap, hintMap);
+                            BC.set(result.getText());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            //session.transfer(flowFile, REL_FAILURE);
+                            errors.set(true);
+                        }
+                    }
+                });
+
+                if (StringUtils.isNotEmpty(BC.get())) {
+                    FlowFile atFlowFile = session.putAttribute(flowFile, BARCODE_ATTRIBUTE_NAME, BC.get());
+                    if (!errors.get()) {
+                        session.transfer(atFlowFile, REL_SUCCESS);
+                    } else {
+                        session.transfer(atFlowFile, REL_FAILURE);
+                    }
+                } else {
+                    if (!errors.get()) {
+                        session.transfer(flowFile, REL_SUCCESS);
+                    } else {
+                        session.transfer(flowFile, REL_FAILURE);
+                    }
                 }
-            }
-        });
 
-        if (!errors.get()) {
-            session.transfer(ff, REL_SUCCESS);
-        } else {
-            session.transfer(ff, REL_FAILURE);
+                break;
+            case DESTINATION_CONTENT:
+                FlowFile conFlowFile = session.write(flowFile, new StreamCallback() {
+                    @Override
+                    public void process(InputStream inputStream, OutputStream outputStream) throws IOException {
+
+                        Map hintMap = new HashMap();
+                        hintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+
+                        try {
+                            BufferedImage barCodeBufferedImage = ImageIO.read(inputStream);
+
+                            LuminanceSource source = new BufferedImageLuminanceSource(barCodeBufferedImage);
+                            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                            Reader reader = new MultiFormatReader();
+                            Result result = reader.decode(bitmap, hintMap);
+                            getLogger().info("Barcode Format: " + result.getBarcodeFormat().toString());
+                            getLogger().info("Barcode Text is: ' " + result.getText() + "'");
+                            outputStream.write(result.getText().getBytes());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            //session.transfer(flowFile, REL_FAILURE);
+                            errors.set(true);
+                        }
+                    }
+                });
+
+                if (!errors.get()) {
+                    session.transfer(conFlowFile, REL_SUCCESS);
+                } else {
+                    session.transfer(conFlowFile, REL_FAILURE);
+                }
+
+                break;
         }
     }
 }

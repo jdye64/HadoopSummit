@@ -78,6 +78,7 @@ public class GetCameraFrame extends AbstractProcessor {
     private Set<Relationship> relationships;
 
     private VideoCapture camera;
+    private final int CAMERA_ID = 0;
 
     @Override
     protected void init(final ProcessorInitializationContext context) {
@@ -93,13 +94,13 @@ public class GetCameraFrame extends AbstractProcessor {
         this.relationships = Collections.unmodifiableSet(relationships);
 
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        camera = new VideoCapture(1);
+        camera = new VideoCapture(CAMERA_ID);
         try {
             Thread.sleep(2000);             //Give the Camera a few seconds to initialize
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        camera.open(0);
+        camera.open(CAMERA_ID);
 
         if(!camera.isOpened()){
             getLogger().error("Camera Error");

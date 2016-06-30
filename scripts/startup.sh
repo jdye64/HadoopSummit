@@ -8,8 +8,6 @@ mysql --local-infile=1  -h mysql -P 3306 -u root -p
 
 
 # Example of how to load csv data
-load data local infile 'Data.csv' into table attendees
-fields terminated by ','
-lines terminated by '\n';
+load data local infile 'Data.csv' into table attendees fields terminated by ',' lines terminated by '\n';
 
 insert into attendees(ID, FirstName, LastName, Company) VALUES(0123, 'Melissa', 'Park', 'Hortonworks');
