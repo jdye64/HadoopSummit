@@ -1,2 +1,0 @@
-FROM jdye64/hadoopsummit:summit_baseline
-MAINTAINER Jeremy Dyer
